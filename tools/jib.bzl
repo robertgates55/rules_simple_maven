@@ -29,9 +29,10 @@ def jib(name, base, pom="pom.xml", srcs=[], deps=[], visibility = None):
             PROJECT_DIR=$$PWD/$$(dirname $(location :pom.xml))
 
             # Change into the directory with the main pom
-            # And run JIB
+            # Run mvn package and then run jib
             cd $$PROJECT_DIR
-            mvn -B -q -N compile com.google.cloud.tools:jib-maven-plugin:3.3.1:buildTar -Djib.from.image=tar://$$BASE_IMAGE_TAR -Djib.outputPaths.tar=$$TAR_OUT -Djib.outputPaths.digest=$$TAR_OUT.sha256
+            mvn -B -q -N package -Dmaven.test.skip=true -DskipTests
+            mvn -B -q com.google.cloud.tools:jib-maven-plugin:3.3.1:buildTar -Djib.from.image=tar://$$BASE_IMAGE_TAR -Djib.outputPaths.tar=$$TAR_OUT -Djib.outputPaths.digest=$$TAR_OUT.sha256
             sed -i'.orig' 's/sha256\\://' $$TAR_OUT.sha256
         """ % (name, base),
         message = "Building: %s" % native.package_name(),
