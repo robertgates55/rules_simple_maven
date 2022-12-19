@@ -26,8 +26,9 @@ def mvn(name, pom="pom.xml", srcs=[], deps=[], visibility = None):
             export JAVA_HOME=$$PWD/$(JAVABASE)
             BUILD_ROOT=$$PWD
             OUTPUT_MARKER=$$BUILD_ROOT/$@
+            DEP_LOCATIONS="%s"
 
-            for file in %s
+            for file in $$DEP_LOCATIONS
             do
                 if [[ $$file == *.tar ]]
                 then

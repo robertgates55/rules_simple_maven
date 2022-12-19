@@ -136,7 +136,7 @@ if $0 == __FILE__
     # Map to bazel targets
     dep_targets = deps
                     .reject { |d| d.empty? }
-                    .reject { |d| d[:scope] == 'test' }
+                    # .reject { |d| d[:scope] == 'test' }
                     .map{|dep| get_artifact_location(all_packages, dep[:group_id], dep[:artifact_id])}
                     .map{|dep_location| "@cube//#{dep_location}:mvn"}
                     .uniq
