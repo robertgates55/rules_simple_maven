@@ -32,12 +32,8 @@ def mvn(name, pom="pom.xml", srcs=[], deps=[], visibility = None):
             do
                 if [[ $$file == *.tar ]]
                 then
-                    cd $$BUILD_ROOT
-                    OUT_DIR=$$(basename $$file .tar)
-                    mkdir -p $$OUT_DIR
-                    rm -rf $$OUT_DIR/*
-                    tar -xf $$file -C $$OUT_DIR
-                    cd $$OUT_DIR
+                    cd $$(mktemp -d -t $$(basename $$file .tar))
+                    tar -xf $$BUILD_ROOT/$$file
                     mvn -B -q -N validate jar:jar install:install
                 fi
             done
