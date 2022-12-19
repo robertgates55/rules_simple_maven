@@ -17,7 +17,7 @@ def mvn(name, pom="pom.xml", srcs=[], deps=[], visibility = None):
         name = "%s-install-deps" % name,
         srcs = [
             "@src_maven_tree//:%s_deps" % PACKAGE_NAME
-        ],
+        ] + deps,
         outs = ["install.completed"],
         toolchains = ["@bazel_tools//tools/jdk:current_java_runtime"],
         local = True,
