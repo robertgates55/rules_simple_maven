@@ -100,7 +100,7 @@ def get_deps_from_pom_hash(pom_hash)
   else
     deps = [ pom_hash[:project][:dependencies][:dependency] ]
   end
-  deps.map{ |dep| { :artifact_id => dep[:artifactId], :group_id => dep[:groupId]}}
+  deps.map { |dep| { :artifact_id => dep[:artifactId], :group_id => dep[:groupId], :scope => dep.key?(:scope) ? dep[:scope] : 'compile'}}
 end
 
 def get_duco_deps(deps)
@@ -135,7 +135,8 @@ if $0 == __FILE__
 
     # Map to bazel targets
     dep_targets = deps
-                    .reject { |c| c.empty? }
+                    .reject { |d| d.empty? }
+                    .reject { |d| d[:scope] == 'test' }
                     .map{|dep| get_artifact_location(all_packages, dep[:group_id], dep[:artifact_id])}
                     .map{|dep_location| "@cube//#{dep_location}:mvn"}
                     .uniq
