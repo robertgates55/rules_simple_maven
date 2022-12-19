@@ -35,7 +35,8 @@ def mvn(name, pom="pom.xml", srcs=[], deps=[], visibility = None):
                     cd $$BUILD_ROOT
                     OUT_DIR=$$(basename $$file .tar)
                     mkdir -p $$OUT_DIR
-                    tar -xf $$file -C $$OUT_DIR --overwrite
+                    rm -rf $$OUT_DIR/*
+                    tar -xf $$file -C $$OUT_DIR
                     cd $$OUT_DIR
                     mvn -B -q -N validate jar:jar install:install
                 fi
