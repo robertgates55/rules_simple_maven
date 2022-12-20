@@ -24,7 +24,7 @@ def jib(name, base, pom="pom.xml", srcs=[], deps=[], visibility = None):
             export JAVA_HOME=$$PWD/$(JAVABASE)
 
             TAR_OUT=$$PWD/$(location %s.tar)
-            BASE_IMAGE_TAR=$$PWD/$(location %s).tar
+            BASE_IMAGE_TAR=$$PWD/$(location %s)
             BUILD_ROOT=$$PWD
             PROJECT_DIR=$$PWD/$$(dirname $(location :pom.xml))
 
