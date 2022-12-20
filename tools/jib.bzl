@@ -25,6 +25,7 @@ def jib(name, base, pom="pom.xml", srcs=[], deps=[], visibility = None):
 
             TAR_OUT=$$PWD/$(location %s.tar)
             BASE_IMAGE_TAR=$$PWD/$(location %s)
+            if [[ ! "$$BASE_IMAGE_TAR" == *.tar ]]; then BASE_IMAGE_TAR="$$BASE_IMAGE_TAR.tar"; fi
             BUILD_ROOT=$$PWD
             PROJECT_DIR=$$PWD/$$(dirname $(location :pom.xml))
 
