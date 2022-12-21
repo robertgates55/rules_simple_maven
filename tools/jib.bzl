@@ -40,7 +40,5 @@ def jib(name, base, pom="pom.xml", srcs=[], deps=[], visibility = None):
         visibility = ["//visibility:public"],
     )
 
-    native.alias(
-        name = "jib",
-        actual = ":%s" % name,
-    )
+
+

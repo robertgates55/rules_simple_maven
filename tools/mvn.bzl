@@ -67,7 +67,7 @@ def mvn(name, pom="pom.xml", srcs=[], deps=[], visibility = None):
 
             # Skip tests and skip compiling tests
             # Batch mode, quiet mode, non-recursive mode
-            mvn -B -q -N install -Dmaven.test.skip=true -DskipTests
+            mvn -B -q -N install -DskipTests
 
             tar -czf $$OUTPUT_TAR target/ pom.xml >/dev/null
         """,
@@ -78,4 +78,41 @@ def mvn(name, pom="pom.xml", srcs=[], deps=[], visibility = None):
     native.alias(
         name = "mvn",
         actual = ":%s" % name,
+    )
+
+def mvn_test(name, pom="pom.xml", srcs=[], deps=[], visibility = None):
+
+    PACKAGE_NAME = native.package_name().replace("/","_")
+    DEP_LOCATIONS = ["$(locations %s)" % d for d in deps] + ["$(locations @src_maven_tree//:%s_deps)" % PACKAGE_NAME]
+
+    native.filegroup(
+        name = "mvn_test_srcs",
+        srcs = srcs,
+    )
+
+    native.genrule(
+        name = name,
+        srcs = [
+            "pom.xml",
+        ] + deps,
+        outs = ["junit.xml"],
+        toolchains = ["@bazel_tools//tools/jdk:current_java_runtime"],
+        local = True,
+        cmd = """
+            # Set the java for repeatability - see toolchains
+            export JAVA_HOME=$$PWD/$(JAVABASE)
+            BUILD_ROOT=$$PWD
+            OUTPUT=$$BUILD_ROOT/$@
+
+            #npm install -g junit-merge
+
+            # Change into the directory with the pom
+            PROJECT_DIR=$$PWD/$$(dirname $(location :pom.xml))
+            cd $$PROJECT_DIR
+            mvn -B -q -N test || true
+
+            mkdir -p target/surefire-reports/
+            touch target/surefire-reports/empty.xml
+            junit-merge -o $$OUTPUT -d target/surefire-reports/
+        """
     )
